@@ -1,52 +1,85 @@
 # Bitespeed Identity Reconciliation API
 
-This project is a backend service to reconcile user identities based on phone numbers and email addresses. Given a new contact, it returns the associated primary and secondary contacts, ensuring no duplicate identities are stored.
+This is a Node.js backend service built with TypeScript, Express, Prisma, and PostgreSQL that solves the **Identity Reconciliation** problem for Bitespeed and FluxKart.
 
-## 🔧 Tech Stack
-
-- **Node.js** with **TypeScript**
-- **Express.js** - Web framework
-- **Prisma ORM** with **PostgreSQL**
-- **Docker & Docker Compose**
-- **Jest** - Unit and integration testing
+Dr. Emmett Brown is making mysterious purchases under different emails and phone numbers. This backend links all those identities back to a single customer, no matter how many aliases they use!
 
 ---
 
-## 📦 Endpoints
+## 🚀 Live API Endpoint
 
-### 🔹 `POST /identify`
+**POST /identify:**  
+👉 https://bitespeed-identity-reconciliation-production.up.railway.app/identify  
+**GET /health:**  
+👉 https://bitespeed-identity-reconciliation-production.up.railway.app/health
 
-**Description:**  
-Accepts an email and/or phone number, checks existing records, and returns the unified contact structure.
+---
 
-**Request Body:**
-```json
-{
-  "email": "john@example.com",
-  "phoneNumber": "1234567890"
+## 📦 Tech Stack
+
+- Node.js + TypeScript
+- Express.js
+- Prisma ORM + PostgreSQL
+- Docker + Docker Compose
+- Railway (Hosting)
+- Jest (Unit & Integration Testing)
+
+---
+
+## 🧠 Problem Overview
+
+FluxKart users often make purchases with different emails/phone numbers.  
+This backend links different contact details to a single user using a relational schema:
+
+```ts
+Contact {
+  id             Int
+  phoneNumber    String?
+  email          String?
+  linkedId       Int? // ID of another Contact linked to this one
+  linkPrecedence "primary" | "secondary"
+  createdAt      DateTime
+  updatedAt      DateTime
+  deletedAt      DateTime?
 }
 ```
 
-**Response Example:**
+---
+
+## 📫 API Endpoints
+
+### POST `/identify`
+
+Link or create contact identities based on provided email and/or phoneNumber.
+
+#### 📥 Request Payload
+
+```json
+{
+  "email": "mcfly@hillvalley.edu",
+  "phoneNumber": "9876543210"
+}
+```
+
+#### 📤 Response
+
 ```json
 {
   "contact": {
-    "primaryContactId": 1,
-    "emails": ["john@example.com", "john@bitespeed.com"],
-    "phoneNumbers": ["1234567890", "9876543210"],
-    "secondaryContactIds": [2, 3]
+    "primaryContatctId": 1,
+    "emails": ["lorraine@hillvalley.edu", "mcfly@hillvalley.edu"],
+    "phoneNumbers": ["9876543210"],
+    "secondaryContactIds": [23]
   }
 }
 ```
 
 ---
 
-### 🔹 `GET /health`
+### GET `/health`
 
-**Description:**  
-Simple health check for monitoring container and app status.
+Returns a basic health check to confirm the server is up.
 
-**Response:**
 ```json
 {
   "status": "ok"
@@ -55,50 +88,84 @@ Simple health check for monitoring container and app status.
 
 ---
 
-## 🚀 Hosted API
-
-👉 **Live Deployment:**  
-[https://bitespeed-identity-reconciliation-production.up.railway.app](https://bitespeed-identity-reconciliation-production.up.railway.app)
-
----
-
-## 🛠️ Setup Instructions
+## 🧪 Local Development & Setup
 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/bitespeed-identity-reconciliation.git
+git clone https://github.com/yourusername/bitespeed-identity-reconciliation.git
 cd bitespeed-identity-reconciliation
 ```
 
-### 2. Configure environment variables
+### 2. Setup `.env` file
 
-Create a `.env` file with the following:
 ```env
-DATABASE_URL=your_postgres_connection_string
+DATABASE_URL="your_postgres_url"
 PORT=3000
-NODE_ENV=development
 ```
 
-### 3. Run with Docker
+### 3. Run locally
 
 ```bash
-docker compose up -d
+npm install
+npx prisma generate
+npx prisma db push
+npm run dev
 ```
 
-To rebuild after changes:
+### 4. Run tests
+
 ```bash
-docker compose down -v --remove-orphans
-docker compose up -d --build
+npm run test
 ```
 
 ---
 
-## 🧪 Running Tests
+## 🧠 Logic Rules (As per Bitespeed Task)
 
-Run the test suite inside the Docker container:
-```bash
-docker compose exec app npm test
-```
+- New contact → `linkPrecedence: primary`
+- Same email/phone found → consolidate to oldest record
+- If two primaries match on different fields → older becomes primary, newer turns into `secondary`
+- Circular chains are avoided using `linkedId` and history is preserved via timestamps
 
 ---
+
+## 🧪 Test Payloads from Assignment
+
+| Input Email               | Input Phone | Output Primary ID | Secondary IDs |
+|--------------------------|-------------|--------------------|----------------|
+| `lorraine@hillvalley.edu`| `9876543210`    | `1`                | `[]`           |
+| `mcfly@hillvalley.edu`   | `9876543210`    | `1`                | `[23]`         |
+| `biffsucks@hillvalley.edu` | `8787879856`  | `11`               | `[27]`         |
+| `george@hillvalley.edu`  | `8787879856`    | `11`               | `[27]`         |
+
+---
+
+## 📦 Deployment Info
+
+- Hosted on: [Railway.app](https://railway.app/)
+- DB used: PostgreSQL (Cloud)
+- Prisma schema is bundled & migrations pushed
+- Fully dockerized app: `docker-compose up -d`
+
+---
+
+## 📬 Submission Info
+
+- 🔗 GitHub: [your repository link]
+- 🌐 Hosted API: https://bitespeed-identity-reconciliation-production.up.railway.app/identify
+- 🧠 Challenge solved with all edge cases handled
+- ✅ Tests passing for all scenarios
+
+---
+
+## 👩‍💻 Author
+
+**Saheli Mahapatra**  
+[LinkedIn](https://www.linkedin.com/in/saheli-mahapatra) • [GitHub](https://github.com/yourusername)
+
+---
+
+## 📜 License
+
+This project is for educational purposes and interview evaluation.
