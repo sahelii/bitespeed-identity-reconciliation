@@ -49,5 +49,3 @@ Dockerfile
 # Documentation
 README.md
 
-# Prisma migrations (will be handled by database setup)
-prisma/migrations 
