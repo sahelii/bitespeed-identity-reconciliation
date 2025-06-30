@@ -93,7 +93,7 @@ Returns a basic health check to confirm the server is up.
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/bitespeed-identity-reconciliation.git
+git clone https://github.com/sahelii/bitespeed-identity-reconciliation.git
 cd bitespeed-identity-reconciliation
 ```
 
