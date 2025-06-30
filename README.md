@@ -152,7 +152,7 @@ npm run test
 
 ## 📬 Submission Info
 
-- 🔗 GitHub: [your repository link]
+- 🔗 GitHub: [https://github.com/sahelii/bitespeed-identity-reconciliation]
 - 🌐 Hosted API: https://bitespeed-identity-reconciliation-production.up.railway.app/identify
 - 🧠 Challenge solved with all edge cases handled
 - ✅ Tests passing for all scenarios
@@ -162,7 +162,7 @@ npm run test
 ## 👩‍💻 Author
 
 **Saheli Mahapatra**  
-[LinkedIn](https://www.linkedin.com/in/saheli-mahapatra) • [GitHub](https://github.com/yourusername)
+[LinkedIn](https://www.linkedin.com/in/saheli-mahapatra-83b759202/) • [GitHub](https://github.com/sahelii)
 
 ---
 
